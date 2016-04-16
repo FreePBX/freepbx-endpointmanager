@@ -1616,7 +1616,7 @@ class Endpointman implements \BMO
                                         $sql = "SELECT id FROM endpointman_brand_list WHERE name LIKE '%" . $device[1] . "%' LIMIT 1";
                                         $res = sql($sql);
 
-                                        if ($res->numRows() > 0) {
+                                        if ($res->rowCount() > 0) {
                                             $brand_id = sql($sql, 'getOne');
                                             $brand_id = $brand_id[0];
 
@@ -1626,12 +1626,12 @@ class Endpointman implements \BMO
                                             $line_id = isset($device[4]) ? $device[4] : 1;
 
                                             $res_model = sql($sql_model);
-                                            if ($res_model->numRows()) {
+                                            if ($res_model->rowCount()) {
                                                 $model_id = sql($sql_model, 'getRow', DB_FETCHMODE_ASSOC);
                                                 $model_id = $model_id['id'];
 
                                                 $res_ext = sql($sql_ext);
-                                                if ($res_ext->numRows()) {
+                                                if ($res_ext->rowCount()) {
                                                     $ext = sql($sql_ext, 'getRow', DB_FETCHMODE_ASSOC);
                                                     $description = $ext['name'];
                                                     $ext = $ext['extension'];
@@ -3703,7 +3703,7 @@ class Endpointman implements \BMO
         $brand = sql($oui_sql, 'getRow', DB_FETCHMODE_ASSOC);
 
         $res = sql($oui_sql);
-        $brand_count = $res->numRows();
+        $brand_count = $res->rowCount();
 
         if (!$brand_count) {
             //oui doesn't have a matching mysql reference, probably a PC/router/wap/printer of some sort.
@@ -3806,7 +3806,7 @@ class Endpointman implements \BMO
                         foreach ($temp as $list) {
                             $sql = "SELECT original_name,data FROM endpointman_custom_configs WHERE id = " . $list;
                             $res = sql($sql);
-                            if ($res->numRows()) {
+                            if ($res->rowCount()) {
                                 $data = sql($sql, 'getRow', DB_FETCHMODE_ASSOC);
                                 $provisioner_lib->config_files_override[$data['original_name']] = $data['data'];
                             }
@@ -3820,7 +3820,7 @@ class Endpointman implements \BMO
                         foreach ($temp as $list) {
                             $sql = "SELECT original_name,data FROM endpointman_custom_configs WHERE id = " . $list;
                             $res = sql($sql);
-                            if ($res->numRows()) {
+                            if ($res->rowCount()) {
                                 $data = sql($sql, 'getRow', DB_FETCHMODE_ASSOC);
                                 $provisioner_lib->config_files_override[$data['original_name']] = $data['data'];
                             }
@@ -4362,7 +4362,7 @@ class Endpointman implements \BMO
                 $brand = $this->eda->sql($oui_sql, 'getRow', DB_FETCHMODE_ASSOC);
 
                 $res = $this->eda->sql($oui_sql);
-                $brand_count = $res->numRows();
+                $brand_count = $res->rowCount();
 
                 if (!$brand_count) {
                     //oui doesn't have a matching mysql reference, probably a PC/router/wap/printer of some sort.
@@ -4376,7 +4376,7 @@ class Endpointman implements \BMO
 
                 $res = $this->eda->sql($epm_sql);
 
-                $epm = $res->numRows() ? TRUE : FALSE;
+                $epm = $res->rowCount() ? TRUE : FALSE;
 
                 //Add into a final array
                 $final[$z] = array("ip" => $ip, "mac" => $mac, "mac_strip" => $mac_strip, "oui" => $oui, "brand" => $brand['name'], "brand_id" => $brand['id'], "endpoint_managed" => $epm);
@@ -4722,7 +4722,7 @@ class Endpointman implements \BMO
         foreach ($config_files_list as $files) {
             $sql = "SELECT * FROM  endpointman_custom_configs WHERE product_id = '" . $row['product_id'] . "' AND original_name = '" . $files . "'";
             $alt_configs_list_count = $this->eda->sql($sql);
-            if ($alt_configs_list_count->numRows() > 0) {
+            if ($alt_configs_list_count->rowCount() > 0) {
                 $alt_configs_list = $this->eda->sql($sql, 'getAll', DB_FETCHMODE_ASSOC);
                 $alt_configs[$i]['name'] = $files;
                 $files = str_replace(".", "_", $files);
