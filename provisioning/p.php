@@ -82,8 +82,6 @@ if (getMethod() == "GET") {
     $strip = str_replace('spa', '', $filename);
 
     if (preg_match('/[0-9A-Fa-f]{12}/i', $strip, $matches) && !(preg_match('/[0]{10}[0-9]{2}/i', $strip))) {
-        echo "a";
-        exit;
         $mac_address = $matches[0];
 
         $sql = "SELECT id FROM `endpointman_mac_list` WHERE `mac` LIKE '%" . $mac_address . "%'";
