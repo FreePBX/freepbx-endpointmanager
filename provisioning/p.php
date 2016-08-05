@@ -65,13 +65,13 @@ if(getMethod() == "GET") {
     $filename = basename($_SERVER["REQUEST_URI"]);
     $web_path = 'http://'.$_SERVER["SERVER_NAME"].dirname($_SERVER["PHP_SELF"]).'/';
     /*
-    if ($filename == "p.php") { 
+    if ($filename == "p.php") {
             $filename = "spa502G.cfg";
             $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']."/spa502G.cfg";
             $web_path = $web_path."p.php/";
     }
      */
-    
+
     # Firmware Linksys/SPA504G-7.4.3a is broken and MUST be upgraded.
     if (preg_match('/7.4.3a/', $_SERVER['HTTP_USER_AGENT'])) {
             $str = '<flat-profile><Upgrade_Enable group="Provisioning/Firmware_Upgrade">Yes</Upgrade_Enable>';
@@ -79,27 +79,25 @@ if(getMethod() == "GET") {
             echo $str;
             exit;
     }
-	
+
     $filename = str_replace('p.php/','', $filename);
     $strip = str_replace('spa', '', $filename);
-    
+
     if(preg_match('/[0-9A-Fa-f]{12}/i', $strip, $matches) && !(preg_match('/[0]{10}[0-9]{2}/i',$strip))) {
-    	echo "a";
-    	exit;
         $mac_address = $matches[0];
-        
+
         $sql = "SELECT id FROM `endpointman_mac_list` WHERE `mac` LIKE '%" . $mac_address . "%'";
         $mac_id = sql($sql, 'getOne');
         $phone_info = FreePBX::Endpointman()->get_phone_info($mac_id);
-		$files = FreePBX::Endpointman()->prepare_configs($phone_info, FALSE, FALSE);
-        
+				$files = FreePBX::Endpointman()->prepare_configs($phone_info, FALSE, FALSE);
+
         if(!$files) {
             header("HTTP/1.0 500 Internal Server Error", true, 500);
             echo "<h1>"._("Error 500 Internal Server Error")."</h1>";
             echo _("System Failure!");
             die();
         }
-        
+
         if (array_key_exists($filename, $files)) {
             echo $files[$filename];
         } else {
@@ -109,13 +107,13 @@ if(getMethod() == "GET") {
             die();
         }
 
-    } 
+    }
     else {
         require_once (PROVISIONER_BASE.'endpoint/base.php');
         $data = Provisioner_Globals::dynamic_global_files($filename, FreePBX::Endpointman()->configmod->get("config_location"), $web_path);
         if($data !== FALSE) {
             echo $data;
-        } 
+        }
         else {
         	header("HTTP/1.0 404 Not Found", true, 404);
         	echo "<h1>"._("Error 404 Not Found")."</h1>";
@@ -123,7 +121,7 @@ if(getMethod() == "GET") {
         	die();
         }
     }
-} 
+}
 else {
     header('HTTP/1.1 403 Forbidden', true, 403);
     echo "<h1>"._("Error 403 Forbidden")."</h1>";
