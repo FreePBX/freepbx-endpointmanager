@@ -1,7 +1,12 @@
+<div class="fpbx-container">
+<div class="display full-border">
+
 {include="global_header"}
-<div id="fond_blanc_ipneos">
+
+<br/>
 <h2><?php echo _('Device List');?></h2>
-<hr>
+<br/>
+
 {if condition="isset($show_error_box)"}
 {include="message_box"}
 {/if}
@@ -395,7 +400,8 @@
 	{/if}
 </table>
 {/if}
-
+<br/>
+<br/>
 <form id="managed" action='config.php?type=tool&amp;display=epm_devices' method='POST'>
 <h3><?php echo _('Current Managed Extensions')?></h3>
 
@@ -403,20 +409,44 @@
 <button type="button" id="deselecter" style="zoom: 0.8" onclick="togglePhones(false)" ><i class="info icon-check-empty" id="toggle_all_phones_off" title="Click to Deselect All Phones"></i> Deselect All</button>
 <button type="button" id="expander"   style="zoom: 0.8" onclick="toggleDisplayAll('expand')"  ><i class="info icon-chevron-down" id="toggle_all_img" title="Click to Expand All Line Information"  ></i> Expand All</button>
 <button type="button" id="collapser"  style="zoom: 0.8" onclick="toggleDisplayAll('collapse')"><i class="info icon-chevron-up"   id="toggle_all_img" title="Click to Collapse All Line Information"></i> Collapse All</button>
-<table width='97%' align='center' id='devList'>
-    <thead>
-    <tr class="headerRow">
-        <th width="7%""></th>
-        <th width="13%" align='center'><?php echo _('MAC Address')?></th>
-        <th width="13%" align='center'><?php echo _('Brand')?></th>
-        <th width="10%" align='center'><?php echo _('Model of Phone')?></th>
-        <th width="10%" align='center'><?php echo _('Line')?></th>
-        <th width="19%" align='center'><?php echo _('Extension Number')?></th>
-        <th width="15%" align='center'><?php echo _('Template')?></th>
-        <th width="6%"><?php echo _('Edit')?></th>
-        <th width="7%"><?php echo _('Delete')?></th>
-    </tr>
-    </thead>
+
+					<table id='devList'
+					data-toolbar="#toolbar-all" data-toggle="table" data-pagination="true" 
+					data-show-columns="true" 
+					data-show-toggle="true" 
+					
+					
+					data-toolbar="#toolbar"
+           data-search="true"
+           data-show-refresh="true"
+
+		   
+		   
+		   data-detail-formatter="device"
+           data-minimum-count-columns="1"
+           data-show-pagination-switch="true"
+           data-pagination="true"
+		   
+		   data-id-field="id"
+           data-page-list="[5,10, 25, 50, 100, ALL]"
+           data-show-footer="false"
+			data-side-pagination="device"		
+			class="table table-striped">		
+					
+						<thead>
+							<tr>
+								<th data-sortable="false"><?php echo _(" ")?></th>
+								<th data-sortable="true"><?php echo _("MAC Address")?></th>
+								<th data-sortable="true"><?php echo _("Account")?></th>
+								<th data-sortable="true"><?php echo _("Brand")?></th>
+								<th data-sortable="true"><?php echo _("Model")?></th>
+								<th data-sortable="true"><?php echo _("MAC Address")?></th>
+								<th data-sortable="true"><?php echo _("Template")?></th>
+								<th ><?php echo _("Edit")?></th>
+								<th ><?php echo _("Delete")?></th>
+
+							</tr>
+						</thead>
     <tbody>
 	{loop name="list"}
         <tr class="headerRow">
@@ -445,8 +475,17 @@
         {/loop}
 	{/loop}
     </tbody>
-</table>
+					</table>
 
+
+
+
+
+
+
+
+
+<br/>
 <h4><?php echo _('Selected Phone(s) Options')?></h4>
 <p><button style="width: 100px" type="submit" style="vertical-align:middle" name="button_delete_selected_phones" onclick="managed_options('delete_selected_phones');"><i class="icon-trash red"></i> <?php echo _('Delete')?></button> <?php echo ('Delete Selected Phones')?></p>
 <p><button style="width: 100px" type="submit" name="button_rebuild_selected" onclick="managed_options('rebuild_selected_phones');"><i class="icon-refresh green"></i> <?php echo _('Rebuild')?></button> <?php echo _('Rebuild Configs for Selected Phones')?> (<label><input type="checkbox" name="reboot"><font size="-1">Reboot Phones</font></label>)</p>
@@ -490,7 +529,6 @@
 </form></p>
 
 </form>
-</div>
 
 {if condition="!isset($disable_help)"}
 <script>
@@ -501,3 +539,5 @@
     $("#collapser").hide();
 </script>
 {include="global_footer"}
+</div>
+</div>
