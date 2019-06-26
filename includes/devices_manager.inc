@@ -453,13 +453,14 @@ foreach($devices_list as $devices_row) {
     }
     $list[$i]['master_id'] = $i;
     foreach($line_list as $line_row) {
-        $list[$i]['line'][$z]['ext'] = $line_row['ext'];
-        $list[$i]['line'][$z]['line'] = $line_row['line'];
-        $list[$i]['line'][$z]['description'] = $line_row['description'];
-        $list[$i]['line'][$z]['luid'] = $line_row['luid'];
-		$list[$i]['line'][$z]['ipei'] = $line_row['ipei'];
-        $list[$i]['line'][$z]['master_id'] = $i;
-        $z++;
+      $list[$i]['line'][$z]['ext'] = $line_row['ext'];
+      $list[$i]['line'][$z]['line'] = $line_row['line'];
+      $list[$i]['line'][$z]['description'] = $line_row['description'];
+      $list[$i]['line'][$z]['conn_type'] = $devices_row['conn_type']=="STATIC" ? "Static IP" : $devices_row['conn_type'];
+      $list[$i]['line'][$z]['luid'] = $line_row['luid'];
+      $list[$i]['line'][$z]['ipei'] = $line_row['ipei'];
+      $list[$i]['line'][$z]['master_id'] = $i;
+      $z++;
     }
     $ext = $list[$i]['line'][0]['ext'];
 

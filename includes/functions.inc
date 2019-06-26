@@ -2135,10 +2135,6 @@ class endpointmanager {
 					$provisioner_lib->settings['provispass'] = $getSysadminSettings[provispass][value];
 					$provisioner_lib->settings['sslhpro'] = $getSysadminSettings[sslhpro][value];
 					$provisioner_lib->settings['hpro'] = $getSysadminSettings[hpro][value];
-          $provisioner_lib->settings['netmask'] = $this->global_cfg['netmask'];
-          $provisioner_lib->settings['gateway'] = $this->global_cfg['gateway'];
-          $provisioner_lib->settings['dns1'] = $this->global_cfg['dns1'];
-          $provisioner_lib->settings['dns2'] = $this->global_cfg['dns2'];
 					
 					$provisioner_lib->settings['timestamp'] = time();
 
@@ -2265,8 +2261,24 @@ class endpointmanager {
                 }
 
                 $provisioner_lib->settings['mac'] = $phone_info['mac'];
-                $provisioner_lib->settings['conn_type'] = $phone_info['conn_type'];
-                $provisioner_lib->settings['static_ip'] = $phone_info['static_ip'];
+                if (empty($provisioner_lib->settings['network']['connection_type'])) {
+                    $provisioner_lib->settings['network']['connection_type'] = $phone_info['conn_type'];
+                }
+                if (empty($provisioner_lib->settings['network']['ipv4'])) {
+                    $provisioner_lib->settings['network']['ipv4'] = $phone_info['static_ip'];
+                }
+                if (empty($provisioner_lib->settings['network']['subnet'])) {
+                    $provisioner_lib->settings['network']['subnet'] = $this->global_cfg['netmask'];
+                }
+                if (empty($provisioner_lib->settings['network']['gateway'])) {
+                    $provisioner_lib->settings['network']['gateway'] = $this->global_cfg['gateway'];
+                }
+                if (empty($provisioner_lib->settings['network']['primary_dns'])) {
+                    $provisioner_lib->settings['network']['primary_dns'] = $this->global_cfg['dns1'];
+                }
+                if (empty($provisioner_lib->settings['network']['secondary_dns'])) {
+                    $provisioner_lib->settings['network']['secondary_dns'] = $this->global_cfg['dns2'];
+                }
                 $provisioner_lib->mac = $phone_info['mac'];
 
                 //Setting a line variable here...these aren't defined in the template_data.xml file yet. however they will still be parsed
@@ -2293,6 +2305,7 @@ class endpointmanager {
                 if ($time > 360) {
                     $this->error['generate_time'] = "It took an awfully long time to generate configs...(" . round($time, 2) . " seconds)";
                 }
+                //var_dump($provisioner_lib);
                 if ($write) {
                     $this->write_configs($provisioner_lib, $reboot, $settings['config_location'], $phone_info, $returned_data);
                 } else {
@@ -3846,13 +3859,19 @@ class endpointmanager {
     }
     
     function connectionTypes($selected = NULL) {
-      $modes = array("DHCP", "Static IP");
-      $temp = array();
+      $temp = array(
+        array(
+          "value" => "DHCP",
+          "text" => "DHCP"
+        ),
+        array(
+          "value" => "STATIC",
+          "text" => "Static IP"
+        )
+      );
       $i = 0;
-      foreach ($modes as $mode) {
-        $temp[$i]['value'] = $mode;
-        $temp[$i]['text'] = $mode;
-        if ($mode == $selected) {
+      foreach ($temp as $mode) {
+        if ($mode['value'] == $selected) {
           $temp[$i]['selected'] = "selected";
         }
         $i++;

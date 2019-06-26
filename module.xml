@@ -115,6 +115,8 @@
 			<field name="id" type="integer" primarykey="true" autoincrement="true"/>
 			<field name="mac" type="string" length="12" notnull="false"/>
 			<field name="model" type="string" length="11"/>
+			<field name="conn_type" type="string" length="9"/>
+			<field name="static_ip" type="string" length="15" notnull="false"/>
 			<field name="template_id" type="integer"/>
 			<field name="global_custom_cfg_data" type="blob"/>
 			<field name="global_user_cfg_data" type="blob"/>
