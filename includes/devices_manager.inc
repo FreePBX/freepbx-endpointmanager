@@ -72,28 +72,36 @@ switch ($sub_type) {
                 }
                 break;
             case "button_save":
+                $_REQUEST['static_ip'] = trim($_REQUEST['static_ip']);
+                if(!empty($_REQUEST['static_ip']) && !filter_var($_REQUEST['static_ip'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                    $endpoint->error['update_device'] = _("Invalid IP Address") . "!";
+                } else {
+                    $sql = "SELECT id FROM endpointman_mac_list WHERE static_ip = '" . $_REQUEST['static_ip'] . "' AND id <> " . $_REQUEST['edit_id'];
+                    $used = $endpoint->eda->sql($sql, 'getOne');
+                    if ($used) {
+                        $endpoint->error['update_device'] = "You can't assign the same IP Address to multiple devices!";
+                    } else {
+                        $sql = 'SELECT * FROM endpointman_line_list WHERE mac_id = '. $_REQUEST['edit_id'];
+                        $lines_list = $endpoint->eda->sql($sql,'getAll',DB_FETCHMODE_ASSOC);
+                        foreach($lines_list as $row) {
+                            $sql = "SELECT description FROM devices WHERE id = ".$_REQUEST['ext_list_'.$row['luid']];
+                            $name = $endpoint->eda->sql($sql,'getOne');
 
-                $sql = 'SELECT * FROM endpointman_line_list WHERE mac_id = '. $_REQUEST['edit_id'];
+                            $sql = "UPDATE endpointman_line_list SET ipei = '".$_REQUEST['ipei_'.$row['luid']]."', line = '".$_REQUEST['line_list_'.$row['luid']]."', ext = '".$_REQUEST['ext_list_'.$row['luid']]."', description = '".$endpoint->eda->escapeSimple($name)."' WHERE luid =  ". $row['luid'];
+                            $endpoint->eda->sql($sql);
+                        }
+                        $sql = "UPDATE endpointman_mac_list SET template_id = '".$_REQUEST['template_list']."', model = '".$_REQUEST['model_list']."', conn_type = '".$_REQUEST['conn_type']."', static_ip = '".$_REQUEST['static_ip']."' WHERE id =  ". $_REQUEST['edit_id'];
+                        $endpoint->eda->sql($sql);
+                        $row = $endpoint->get_phone_info($_REQUEST['edit_id']);
+                        $endpoint->prepare_configs($row);
+                        $endpoint->message['edit_save'] = _("Saved")."!";
+                        $mode = NULL;
+                    }
+                    
 
-                $lines_list = $endpoint->eda->sql($sql,'getAll',DB_FETCHMODE_ASSOC);
-
-                foreach($lines_list as $row) {
-                    $sql = "SELECT description FROM devices WHERE id = ".$_REQUEST['ext_list_'.$row['luid']];
-                    $name = $endpoint->eda->sql($sql,'getOne');
-
-                    $sql = "UPDATE endpointman_line_list SET ipei = '".$_REQUEST['ipei_'.$row['luid']]."', line = '".$_REQUEST['line_list_'.$row['luid']]."', ext = '".$_REQUEST['ext_list_'.$row['luid']]."', description = '".$endpoint->eda->escapeSimple($name)."' WHERE luid =  ". $row['luid'];
-                    $endpoint->eda->sql($sql);
                 }
 
-                $sql = "UPDATE endpointman_mac_list SET template_id = '".$_REQUEST['template_list']."', model = '".$_REQUEST['model_list']."' WHERE id =  ". $_REQUEST['edit_id'];
-                $endpoint->eda->sql($sql);
 
-
-                $row = $endpoint->get_phone_info($_REQUEST['edit_id']);
-                $endpoint->prepare_configs($row);
-
-                $endpoint->message['edit_save'] = _("Saved")."!";
-                $mode = NULL;
                 break;
             case "delete":
                 $sql = 'SELECT mac_id FROM endpointman_line_list WHERE luid = '.$_REQUEST['edit_id'] ;
@@ -108,7 +116,7 @@ switch ($sub_type) {
         $edit_row['id'] = $_REQUEST['edit_id'];
         break;
     case "add" :
-        $mac_id = $endpoint->add_device($_REQUEST['mac'],$_REQUEST['model_list'],$_REQUEST['ext_list'],$_REQUEST['template_list'],$_REQUEST['line_list']);
+        $mac_id = $endpoint->add_device($_REQUEST['mac'],$_REQUEST['model_list'],$_REQUEST['conn_type'],$_REQUEST['static_ip'],$_REQUEST['ext_list'],$_REQUEST['template_list'],$_REQUEST['line_list']);
         if($mac_id) {
             $phone_info = $endpoint->get_phone_info($mac_id);
             $endpoint->prepare_configs($phone_info);
@@ -280,7 +288,7 @@ switch ($sub_type) {
     case "add_selected_phones" :
         if(isset($_REQUEST['add'])) {
             foreach($_REQUEST['add'] as $num) {
-                $mac_id = $endpoint->add_device($_REQUEST['mac_'.$num],$_REQUEST['model_list_'.$num],$_REQUEST['ext_list_'.$num]);
+                $mac_id = $endpoint->add_device($_REQUEST['mac_'.$num],$_REQUEST['model_list_'.$num],$_REQUEST['conn_type_'.$num],$_REQUEST['static_ip_'.$num],$_REQUEST['ext_list_'.$num]);
                 if($mac_id) {
                     $phone_info = $endpoint->get_phone_info($mac_id);
                     if(isset($_REQUEST['reboot_sel'])) {
@@ -527,6 +535,7 @@ if (isset($template_editor)) {
     $endpoint->tpl->assign("amp_conf_serial", base64_encode(serialize($amp_send)));
     $endpoint->tpl->assign("no_add", $no_add);
     $endpoint->tpl->assign("mode", $mode);
+    $endpoint->tpl->assign("conn_types", $endpoint->connectionTypes());
 
 	
     $edit_row['id'] = isset($edit_row['id']) ? $edit_row['id'] : '0';
@@ -564,6 +573,9 @@ if (isset($template_editor)) {
 
             $endpoint->tpl->assign("brand_id", $edit_row['brand_id']);
             $endpoint->tpl->assign("models_ava", $ma);
+
+            $endpoint->tpl->assign("conn_types", $endpoint->connectionTypes($edit_row['conn_type']));
+            $endpoint->tpl->assign("static_ip", $edit_row['static_ip']);
 
             $endpoint->tpl->assign("display_templates", $endpoint->display_templates($edit_row['product_id'],$edit_row['template_id']));
 

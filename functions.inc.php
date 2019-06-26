@@ -106,13 +106,15 @@ function endpointman_configpageinit($pagename) {
                     }
                 }
 
-                $mac = isset($_REQUEST['epm_mac']) ? $_REQUEST['epm_mac'] : null;
+                $mac = isset($_REQUEST['epm_mac']) ? trim($_REQUEST['epm_mac']) : null;
 
                 if (!empty($mac)) {
                     //Mac is set
                     $brand = isset($_REQUEST['epm_brand']) ? $_REQUEST['epm_brand'] : null;
                     $model = isset($_REQUEST['epm_model']) ? $_REQUEST['epm_model'] : null;
                     $line = isset($_REQUEST['epm_line']) ? $_REQUEST['epm_line'] : null;
+                    $conn_type = isset($_REQUEST['epm_conn_type']) ? trim($_REQUEST['epm_conn_type']) : null;
+                    $static_ip = isset($_REQUEST['epm_static_ip']) ? trim($_REQUEST['epm_static_ip']) : null;
                     $temp = isset($_REQUEST['epm_temps']) ? $_REQUEST['epm_temps'] : null;
                     if (isset($_REQUEST['name'])) {
                         $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : null;
@@ -143,7 +145,7 @@ function endpointman_configpageinit($pagename) {
 
                             if (($lines_list) AND (isset($model)) AND (isset($line)) AND (!isset($delete)) AND (isset($temp))) {
                                 //Modifying line already in the database
-                                $endpoint->update_device($macid, $model, $temp, $lines_list['luid'], $name, $lines_list['line']);
+                                $endpoint->update_device($macid, $model, $conn_type, $static_ip, $temp, $lines_list['luid'], $name, $lines_list['line']);
 
                                 $row = $endpoint->get_phone_info($macid);
                                 if (isset($reboot)) {
@@ -160,7 +162,7 @@ function endpointman_configpageinit($pagename) {
                                     $endpoint->add_line($macid, $line, $extdisplay, $name);
                                 }
 
-                                $endpoint->update_device($macid, $model, $temp, NULL, NULL, NULL, FALSE);
+                                $endpoint->update_device($macid, $model, $conn_type, $static_ip, $temp, NULL, NULL, NULL, FALSE);
 
                                 $row = $endpoint->get_phone_info($macid);
                                 if (isset($reboot)) {
@@ -171,7 +173,7 @@ function endpointman_configpageinit($pagename) {
                             }
                         } elseif (!isset($delete)) {
                             //Add Extension/Phone to database
-                            $mac_id = $endpoint->add_device($mac, $model, $extdisplay, $temp, NULL, $name);
+                            $mac_id = $endpoint->add_device($mac, $model, $conn_type, $static_ip, $extdisplay, $temp, NULL, $name);
 
                             if ($mac_id) {
                                 debug('Write files?');

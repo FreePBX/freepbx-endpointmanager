@@ -323,10 +323,16 @@ class endpointmanager {
         return($phone_info);
     }
 
-    function add_device($mac, $model, $ext, $template=NULL, $line=NULL, $displayname=NULL) {
-		$ipei = $_REQUEST['ipei'];
+    function add_device($mac, $model, $conn_type, $static_ip, $ext, $template=NULL, $line=NULL, $displayname=NULL) {
+        $ipei = $_REQUEST['ipei'];
         $mac = $this->mac_check_clean($mac);
-        if ($mac) {
+        if (!$mac) {
+          $this->error['add_device'] = _("Invalid MAC Address") . "!";
+          return(FALSE);
+        } elseif(!empty($static_ip) && !filter_var($static_ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+          $this->error['add_device'] = _("Invalid IP Address") . "!";
+          return(FALSE);
+        } else {
             if (empty($model)) {
                 $this->error['add_device'] = _("You Must Select A Model From the Drop Down") . "!";
                 return(FALSE);
@@ -343,7 +349,7 @@ class endpointmanager {
                             $template = $dup['template_id'];
                         }
 
-                        $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", template_id =  " . $template . " WHERE id = " . $dup['id'];
+                        $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", conn_type = " . $conn_type . ", static_ip = " . $static_ip . ", template_id =  " . $template . " WHERE id = " . $dup['id'];
                         $this->eda->sql($sql);
                         $return = $this->add_line($dup['id'], $line, $ext);
                         if ($return) {
@@ -363,6 +369,14 @@ class endpointmanager {
                             $this->error['add_device'] = "You can't assign the same user to multiple devices!";
                             return(FALSE);
                         }
+                        
+                        $sql = "SELECT id FROM endpointman_mac_list WHERE static_ip = '" . $static_ip . "'";
+                        $used = $this->eda->sql($sql, 'getOne');
+
+                        if ($used) {
+                            $this->error['add_device'] = "You can't assign the same IP Address to multiple devices!";
+                            return(FALSE);
+                        }
 
                         if (!isset($displayname)) {
                             $sql = 'SELECT description FROM devices WHERE id = ' . $ext;
@@ -375,7 +389,7 @@ class endpointmanager {
 
                         $row = & $this->eda->sql($sql, 'getRow', DB_FETCHMODE_ASSOC);
 
-                        $sql = "INSERT INTO `endpointman_mac_list` (`mac`, `model`, `template_id`) VALUES ('" . $mac . "', '" . $model . "', '" . $template . "')";
+                        $sql = "INSERT INTO `endpointman_mac_list` (`mac`, `model`, `conn_type`, `static_ip`, `template_id`) VALUES ('" . $mac . "', '" . $model . "', '" . $conn_type . "', '" . $static_ip . "', '" . $template . "')";
                         $this->eda->sql($sql);
 
                         $sql = 'SELECT last_insert_id()';
@@ -396,9 +410,6 @@ class endpointmanager {
                     return(FALSE);
                 }
             }
-        } else {
-            $this->error['add_device'] = _("Invalid MAC Address") . "!";
-            return(FALSE);
         }
     }
 
@@ -476,8 +487,21 @@ class endpointmanager {
         }
     }
 
-    function update_device($macid, $model, $template, $luid=NULL, $name=NULL, $line=NULL, $update_lines=TRUE) {
-        $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", template_id =  " . $template . " WHERE id = " . $macid;
+    function update_device($macid, $model, $conn_type, $static_ip, $template, $luid=NULL, $name=NULL, $line=NULL, $update_lines=TRUE) {
+        if(!empty($static_ip) && !filter_var($static_ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+          $this->error['update_device'] = _("Invalid IP Address") . "!";
+          return(FALSE);
+        }
+        
+        $sql = "SELECT id FROM endpointman_mac_list WHERE static_ip = '" . $static_ip . "' AND id <> " . $macid;
+        $used = $this->eda->sql($sql, 'getOne');
+
+        if ($used) {
+          $this->error['update_device'] = "You can't assign the same IP Address to multiple devices!";
+          return(FALSE);
+        }
+        
+        $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", template_id =  " . $template . ", conn_type = " . $conn_type . ", static_ip = " . $static_ip . " WHERE id = " . $macid;
         $this->eda->sql($sql);
 
         if ($update_lines) {
@@ -897,8 +921,8 @@ class endpointmanager {
 
         $res = $this->eda->sql($sql);
         if (count($res)) {
-            //Returns Brand Name, Brand Directory, Model Name, Mac Address, Extension (FreePBX), Custom Configuration Template, Custom Configuration Data, Product Name, Product ID, Product Configuration Directory, Product Configuration Version, Product XML name,
-            $sql = "SELECT endpointman_mac_list.specific_settings, endpointman_mac_list.config_files_override, endpointman_mac_list.global_user_cfg_data, endpointman_model_list.id as model_id, endpointman_brand_list.id as brand_id, endpointman_brand_list.name, endpointman_brand_list.directory, endpointman_model_list.model, endpointman_mac_list.mac, endpointman_mac_list.template_id, endpointman_mac_list.global_custom_cfg_data, endpointman_product_list.long_name, endpointman_product_list.id as product_id, endpointman_product_list.cfg_dir, endpointman_product_list.cfg_ver, endpointman_model_list.template_data, endpointman_model_list.enabled, endpointman_mac_list.global_settings_override FROM endpointman_line_list, endpointman_mac_list, endpointman_model_list, endpointman_brand_list, endpointman_product_list WHERE endpointman_mac_list.model = endpointman_model_list.id AND endpointman_brand_list.id = endpointman_model_list.brand AND endpointman_product_list.id = endpointman_model_list.product_id AND endpointman_mac_list.id = endpointman_line_list.mac_id AND endpointman_mac_list.id = " . $mac_id;
+            //Returns Brand Name, Brand Directory, Model Name, Mac Address, Extension (FreePBX), Connection Type, IP Address, Custom Configuration Template, Custom Configuration Data, Product Name, Product ID, Product Configuration Directory, Product Configuration Version, Product XML name,
+            $sql = "SELECT endpointman_mac_list.specific_settings, endpointman_mac_list.config_files_override, endpointman_mac_list.global_user_cfg_data, endpointman_model_list.id as model_id, endpointman_brand_list.id as brand_id, endpointman_brand_list.name, endpointman_brand_list.directory, endpointman_model_list.model, endpointman_mac_list.mac, endpointman_mac_list.conn_type, endpointman_mac_list.static_ip, endpointman_mac_list.template_id, endpointman_mac_list.global_custom_cfg_data, endpointman_product_list.long_name, endpointman_product_list.id as product_id, endpointman_product_list.cfg_dir, endpointman_product_list.cfg_ver, endpointman_model_list.template_data, endpointman_model_list.enabled, endpointman_mac_list.global_settings_override FROM endpointman_line_list, endpointman_mac_list, endpointman_model_list, endpointman_brand_list, endpointman_product_list WHERE endpointman_mac_list.model = endpointman_model_list.id AND endpointman_brand_list.id = endpointman_model_list.brand AND endpointman_product_list.id = endpointman_model_list.product_id AND endpointman_mac_list.id = endpointman_line_list.mac_id AND endpointman_mac_list.id = " . $mac_id;
 
             $phone_info = $this->eda->sql($sql, 'getRow', DB_FETCHMODE_ASSOC);
 
@@ -2044,7 +2068,6 @@ class endpointmanager {
 				
 				
 				
-				
                 //Loop through Lines!
                 $li = 0;
                 foreach ($phone_info['line'] as $line) {
@@ -2112,6 +2135,10 @@ class endpointmanager {
 					$provisioner_lib->settings['provispass'] = $getSysadminSettings[provispass][value];
 					$provisioner_lib->settings['sslhpro'] = $getSysadminSettings[sslhpro][value];
 					$provisioner_lib->settings['hpro'] = $getSysadminSettings[hpro][value];
+          $provisioner_lib->settings['netmask'] = $this->global_cfg['netmask'];
+          $provisioner_lib->settings['gateway'] = $this->global_cfg['gateway'];
+          $provisioner_lib->settings['dns1'] = $this->global_cfg['dns1'];
+          $provisioner_lib->settings['dns2'] = $this->global_cfg['dns2'];
 					
 					$provisioner_lib->settings['timestamp'] = time();
 
@@ -2238,6 +2265,8 @@ class endpointmanager {
                 }
 
                 $provisioner_lib->settings['mac'] = $phone_info['mac'];
+                $provisioner_lib->settings['conn_type'] = $phone_info['conn_type'];
+                $provisioner_lib->settings['static_ip'] = $phone_info['static_ip'];
                 $provisioner_lib->mac = $phone_info['mac'];
 
                 //Setting a line variable here...these aren't defined in the template_data.xml file yet. however they will still be parsed
@@ -3814,6 +3843,21 @@ class endpointmanager {
         }
 
         return($temp);
+    }
+    
+    function connectionTypes($selected = NULL) {
+      $modes = array("DHCP", "Static IP");
+      $temp = array();
+      $i = 0;
+      foreach ($modes as $mode) {
+        $temp[$i]['value'] = $mode;
+        $temp[$i]['text'] = $mode;
+        if ($mode == $selected) {
+          $temp[$i]['selected'] = "selected";
+        }
+        $i++;
+      }
+      return($temp);
     }
 
     function listTZ($selected) {

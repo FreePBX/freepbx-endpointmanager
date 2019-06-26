@@ -292,6 +292,123 @@
 	<!--END Time Server - NTP Server-->
 </div>
 
+<div class="section-title" data-for="setting_network">
+	<h3><i class="fa fa-minus"></i><?php echo _("Network settings") ?></h3>
+</div>
+<div class="section" data-id="setting_network">
+	<!--Subnet Mask-->
+	<div class="element-container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row">
+					<div class="form-group">
+						<div class="col-md-3">
+							<label class="control-label" for="netmask"><?php echo _("Subnet Mask")?></label>
+							<i class="fa fa-question-circle fpbx-help-icon" data-for="netmask"></i>
+						</div>
+						<div class="col-md-9">
+              <input type="text" class="form-control" placeholder="Subnet Mask..." id="netmask" name="netmask" value="<?php echo FreePBX::Endpointman()->configmod->get("netmask"); ?>">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<span class="help-block fpbx-help-block" id="netmask-help"><?php echo _("Subnet mask to set on the phones when not using DHCP."); ?></span>
+			</div>
+		</div>
+	</div>
+	<!--END Subnet Mask-->
+	<!--Gateway-->
+	<div class="element-container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row">
+					<div class="form-group">
+						<div class="col-md-3">
+							<label class="control-label" for="gateway"><?php echo _("Default Gateway")?></label>
+							<i class="fa fa-question-circle fpbx-help-icon" data-for="gateway"></i>
+						</div>
+						<div class="col-md-9">
+							<div class="input-group">
+                <input type="text" class="form-control" placeholder="Gateway..." id="gateway" name="gateway" value="<?php echo FreePBX::Endpointman()->configmod->get("gateway"); ?>">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id='autodetectntp' onclick="epm_advanced_tab_setting_input_value_change_bt('#gateway', sValue = '<?php echo $_SERVER["SERVER_ADDR"]; ?>', bSaveChange = true);"><i class='fa fa-search'></i> <?php echo _("Use me!")?></button>
+                </span>
+    					</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<span class="help-block fpbx-help-block" id="gateway-help"><?php echo _("Default gateway to set on the phones when not using DHCP."); ?></span>
+			</div>
+		</div>
+	</div>
+	<!--END Gateway-->
+	<!--DNS1-->
+	<div class="element-container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row">
+					<div class="form-group">
+						<div class="col-md-3">
+							<label class="control-label" for="dns1"><?php echo _("Primary DNS Server")?></label>
+							<i class="fa fa-question-circle fpbx-help-icon" data-for="dns1"></i>
+						</div>
+						<div class="col-md-9">
+							<div class="input-group">
+                <input type="text" class="form-control" placeholder="Primary DNS..." id="dns1" name="dns1" value="<?php echo FreePBX::Endpointman()->configmod->get("dns1"); ?>">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id='autodetectntp' onclick="epm_advanced_tab_setting_input_value_change_bt('#dns1', sValue = '<?php echo $_SERVER["SERVER_ADDR"]; ?>', bSaveChange = true);"><i class='fa fa-search'></i> <?php echo _("Use me!")?></button>
+                </span>
+    					</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<span class="help-block fpbx-help-block" id="dns1-help"><?php echo _("Primary DNS Server to set on the phones when not using DHCP."); ?></span>
+			</div>
+		</div>
+	</div>
+	<!--END DNS1-->
+	<!--DNS2-->
+	<div class="element-container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row">
+					<div class="form-group">
+						<div class="col-md-3">
+							<label class="control-label" for="dns2"><?php echo _("Secondary DNS Server")?></label>
+							<i class="fa fa-question-circle fpbx-help-icon" data-for="dns2"></i>
+						</div>
+						<div class="col-md-9">
+							<div class="input-group">
+                <input type="text" class="form-control" placeholder="Secondary DNS..." id="dns2" name="dns2" value="<?php echo FreePBX::Endpointman()->configmod->get("dns2"); ?>">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id='autodetectntp' onclick="epm_advanced_tab_setting_input_value_change_bt('#dns2', sValue = '<?php echo $_SERVER["SERVER_ADDR"]; ?>', bSaveChange = true);"><i class='fa fa-search'></i> <?php echo _("Use me!")?></button>
+                </span>
+    					</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<span class="help-block fpbx-help-block" id="dns2-help"><?php echo _("Secondary DNS Server to set on the phones when not using DHCP."); ?></span>
+			</div>
+		</div>
+	</div>
+	<!--END DNS2-->
+</div>
+
 <div class="section-title" data-for="setting_local_paths">
 	<h3><i class="fa fa-minus"></i><?php echo _("Local Paths") ?></h3>
 </div>

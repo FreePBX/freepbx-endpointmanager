@@ -97,7 +97,11 @@ if (empty($epmdbversion)) {
 		(26, 'adminpass', '123456'),
 		(27, 'userpass', '111111'),
 		(28, 'intsrvip', ''),
-		(29, 'disable_endpoint_warning', '0')";
+		(29, 'disable_endpoint_warning', '0'),
+    (30, 'netmask', '255.255.255.0'),
+    (31, 'gateway', ''),
+    (32, 'dns1', ''),
+    (33, 'dns2', '')";
 		
 		$db->query($sql);
 		out("Done");
@@ -117,16 +121,25 @@ $db->query($sql);
 
 
 if ($epmdbversion < "14.0.0.1"){
-$sql = "UPDATE endpointman_global_vars SET value = 'http://mirror.freepbx.org/provisioner/v3/' WHERE var_name = 'update_server'";
-$db->query($sql);
+  $sql = "UPDATE endpointman_global_vars SET value = 'http://mirror.freepbx.org/provisioner/v3/' WHERE var_name = 'update_server'";
+  $db->query($sql);
 }
 
 if ($epmdbversion < "14.0.1.4"){
-		$sql = "INSERT INTO `endpointman_global_vars` (`idnum`, `var_name`, `value`) VALUES
-		(26, 'adminpass', '123456'),
-		(27, 'userpass', '111111'),
-		(28, 'intsrvip', ''),
-		(29, 'disable_endpoint_warning', '0')";
-		$db->query($sql);
-		out("Done");
-	}
+  $sql = "INSERT INTO `endpointman_global_vars` (`idnum`, `var_name`, `value`) VALUES
+  (26, 'adminpass', '123456'),
+  (27, 'userpass', '111111'),
+  (28, 'intsrvip', ''),
+  (29, 'disable_endpoint_warning', '0')";
+  $db->query($sql);
+}
+
+if($epmdbversion < "14.0.4"){
+  $sql = "INSERT INTO `endpointman_global_vars` (`idnum`, `var_name`, `value`) VALUES
+  (30, 'netmask', '255.255.255.0'),
+  (31, 'gateway', ''),
+  (32, 'dns1', ''),
+  (33, 'dns2', '')";
+  $db->query($sql);
+  out("Done");
+}
