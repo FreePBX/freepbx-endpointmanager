@@ -446,7 +446,7 @@ class Endpointman_Advanced
         
       case "gateway":
         $dget['value'] = trim($dget['value']);
-        if(filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+        if(empty($dget['value']) || filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
           $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='gateway'";
         } else {
           $retarr = array("status" => false, "message" => _("Invalid Gateway IP Address!"));
@@ -455,7 +455,7 @@ class Endpointman_Advanced
         
       case "dns1":
         $dget['value'] = trim($dget['value']);
-        if(filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+        if(empty($dget['value']) || filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
           $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='dns1'";
         } else {
           $retarr = array("status" => false, "message" => _("Invalid Primary DNS IP Address!"));
@@ -464,7 +464,7 @@ class Endpointman_Advanced
         
       case "dns2":
         $dget['value'] = trim($dget['value']);
-        if(filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+        if(empty($dget['value']) || filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
           $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='dns2'";
         } else {
           $retarr = array("status" => false, "message" => _("Invalid Secondary DNS IP Address!"));
