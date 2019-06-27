@@ -223,7 +223,7 @@ function epm_global_refresh_table(snametable = "", showmsg = false)
 	if (snametable === "") { return; }
 	$(snametable).bootstrapTable('refresh');
 	if (showmsg === true) {
-		fpbxToast("Table Refrash Ok!", '', 'success');
+		fpbxToast("Table Refresh Ok!", '', 'success');
 	}
 }
 
