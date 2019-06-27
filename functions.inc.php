@@ -135,8 +135,9 @@ function endpointman_configpageinit($pagename) {
                     $reboot = isset($_REQUEST['epm_reboot']) ? $_REQUEST['epm_reboot'] : null;
 
                     if ($endpoint->mac_check_clean($mac)) {
-                        $sql = "SELECT id FROM endpointman_mac_list WHERE mac = '" . $endpoint->mac_check_clean($mac) . "'";
-                        $macid = $endpoint->eda->sql($sql, 'getOne');
+                        $sql = "SELECT * FROM endpointman_mac_list WHERE mac = '" . $endpoint->mac_check_clean($mac) . "'";
+                        $device = $endpoint->eda->sql($sql, 'getRow', DB_FETCHMODE_ASSOC);
+                        $macid = $device['id'];
                         if ($macid) {
                             //In Database already
 
@@ -145,7 +146,7 @@ function endpointman_configpageinit($pagename) {
 
                             if (($lines_list) AND (isset($model)) AND (isset($line)) AND (!isset($delete)) AND (isset($temp))) {
                                 //Modifying line already in the database
-                                $endpoint->update_device($macid, $model, $conn_type, $static_ip, $temp, $lines_list['luid'], $name, $lines_list['line']);
+                                $endpoint->update_device($macid, $model, $device['conn_type'], $device['static_ip'], $temp, $lines_list['luid'], $name, $lines_list['line']);
 
                                 $row = $endpoint->get_phone_info($macid);
                                 if (isset($reboot)) {
@@ -162,7 +163,7 @@ function endpointman_configpageinit($pagename) {
                                     $endpoint->add_line($macid, $line, $extdisplay, $name);
                                 }
 
-                                $endpoint->update_device($macid, $model, $conn_type, $static_ip, $temp, NULL, NULL, NULL, FALSE);
+                                $endpoint->update_device($macid, $model, $device['conn_type'], $device['static_ip'], $temp, NULL, NULL, NULL, FALSE);
 
                                 $row = $endpoint->get_phone_info($macid);
                                 if (isset($reboot)) {

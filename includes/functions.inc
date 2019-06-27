@@ -501,7 +501,7 @@ class endpointmanager {
           return(FALSE);
         }
         
-        $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", template_id =  " . $template . ", conn_type = " . $conn_type . ", static_ip = " . $static_ip . " WHERE id = " . $macid;
+        $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", template_id =  " . $template . ", conn_type = '" . $conn_type . "', static_ip = '" . $static_ip . "' WHERE id = " . $macid;
         $this->eda->sql($sql);
 
         if ($update_lines) {
