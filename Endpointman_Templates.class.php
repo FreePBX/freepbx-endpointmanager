@@ -194,6 +194,10 @@ class Endpointman_Templates
 				$settings['config_location'] = ""; //$this->configmod->get("config_location");
 				$settings['tz'] = $this->configmod->get("tz");
 				$settings['server_type'] = $this->configmod->get("server_type");
+        $settings['netmask'] = "";
+        $settings['gateway'] = "";
+        $settings['dns1'] = "";
+        $settings['dns2'] = "";
 			}
     		
 			$retarr = array("status" => true, "settings" => $settings, "message" => _("Global Config Read OK!"));
