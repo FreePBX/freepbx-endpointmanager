@@ -349,7 +349,7 @@ class endpointmanager {
                             $template = $dup['template_id'];
                         }
 
-                        $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", conn_type = " . $conn_type . ", static_ip = " . $static_ip . ", template_id =  " . $template . " WHERE id = " . $dup['id'];
+                        $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", conn_type = '" . $conn_type . "', static_ip = '" . $static_ip . "', template_id =  " . $template . " WHERE id = " . $dup['id'];
                         $this->eda->sql($sql);
                         $return = $this->add_line($dup['id'], $line, $ext);
                         if ($return) {
