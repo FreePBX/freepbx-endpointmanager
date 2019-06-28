@@ -1873,24 +1873,23 @@ class endpointmanager {
                 $provisioner_lib = new $class();
 
                 //Determine if global settings have been overridden
-                if ($phone_info['template_id'] > 0) {
-                    if (isset($phone_info['template_data_info']['global_settings_override'])) {
-                        $settings = unserialize($phone_info['template_data_info']['global_settings_override']);
-                    } else {
-                        $settings['srvip'] = $this->global_cfg['srvip'];
-                        $settings['ntp'] = $this->global_cfg['ntp'];
-                        $settings['config_location'] = $this->global_cfg['config_location'];
-                        $settings['tz'] = $this->global_cfg['tz'];
-                    }
-                } else {
-                    if (isset($phone_info['global_settings_override'])) {
-                        $settings = unserialize($phone_info['global_settings_override']);
-                    } else {
-                        $settings['srvip'] = $this->global_cfg['srvip'];
-                        $settings['ntp'] = $this->global_cfg['ntp'];
-                        $settings['config_location'] = $this->global_cfg['config_location'];
-                        $settings['tz'] = $this->global_cfg['tz'];
-                    }
+                if ($phone_info['template_id'] > 0 && isset($phone_info['template_data_info']['global_settings_override'])) {
+                    $settings = unserialize($phone_info['template_data_info']['global_settings_override']);
+                } elseif (isset($phone_info['global_settings_override'])) {
+                    $settings = unserialize($phone_info['global_settings_override']);
+                }
+                
+                if(empty($settings['srvip'])){
+                  $settings['srvip'] = $this->global_cfg['srvip'];
+                }
+                if(empty($settings['ntp'])){
+                  $settings['ntp'] = $this->global_cfg['ntp'];
+                }
+                if(empty($settings['config_location'])){
+                  $settings['config_location'] = $this->global_cfg['config_location'];
+                }
+                if(empty($settings['tz'])){
+                  $settings['tz'] = $this->global_cfg['tz'];
                 }
 
 
