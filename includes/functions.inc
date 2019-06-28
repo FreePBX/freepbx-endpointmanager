@@ -2011,6 +2011,11 @@ class endpointmanager {
                 }
 
                 $new_template_data['ntp'] = $settings['ntp'];
+                
+                $new_template_data['network']['subnet'] = $settings['netmask'];
+                $new_template_data['network']['gateway'] = $settings['gateway'];
+                $new_template_data['network']['primary_dns'] = $settings['dns1'];
+                $new_template_data['network']['secondary_dns'] = $settings['dns2'];
 
                 //Overwrite all specific settings variables now
                 if (!empty($phone_info['specific_settings'])) {

@@ -358,6 +358,10 @@ function epm_template_custom_config_get_global(elmnt)
 				epm_global_input_value_change_bt("#config_loc", data.settings.config_location, false);
 				epm_global_input_value_change_bt("#tz", data.settings.tz, false);
 				epm_global_input_value_change_bt("#ntp_server", data.settings.ntp, false);
+        epm_global_input_value_change_bt("#netmask", data.settings.netmask, false);
+        epm_global_input_value_change_bt("#gateway", data.settings.gateway, false);
+        epm_global_input_value_change_bt("#dns1", data.settings.dns1, false);
+        epm_global_input_value_change_bt("#dns2", data.settings.dns2, false);
 				
 				if (elmnt.name == "button_undo_globals") {
 					fpbxToast(data.message, '', 'success');
@@ -384,7 +388,11 @@ function epm_template_custom_config_update_global(elmnt)
 			ntp_server: epm_global_get_value_by_form("FormCfgGlobalTemplate","ntp_server"),
 			srvip: epm_global_get_value_by_form("FormCfgGlobalTemplate","srvip"),			
 			config_loc: epm_global_get_value_by_form("FormCfgGlobalTemplate","config_loc"),
-			server_type: epm_global_get_value_by_form("FormCfgGlobalTemplate","server_type")
+			server_type: epm_global_get_value_by_form("FormCfgGlobalTemplate","server_type"),
+      netmask: epm_global_get_value_by_form("FormCfgGlobalTemplate","netmask"),
+      gateway: epm_global_get_value_by_form("FormCfgGlobalTemplate","gateway"),
+      dns1: epm_global_get_value_by_form("FormCfgGlobalTemplate","dns1"),
+      dns2: epm_global_get_value_by_form("FormCfgGlobalTemplate","dns2")
 		},
 		dataType: 'json',
 		timeout: 60000,
