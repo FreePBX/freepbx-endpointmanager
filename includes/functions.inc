@@ -370,12 +370,13 @@ class endpointmanager {
                             return(FALSE);
                         }
                         
-                        $sql = "SELECT id FROM endpointman_mac_list WHERE static_ip = '" . $static_ip . "'";
-                        $used = $this->eda->sql($sql, 'getOne');
-
-                        if ($used) {
-                            $this->error['add_device'] = "You can't assign the same IP Address to multiple devices!";
-                            return(FALSE);
+                        if(!empty($static_ip)){
+                            $sql = "SELECT id FROM endpointman_mac_list WHERE static_ip = '" . $static_ip . "'";
+                            $used = $this->eda->sql($sql, 'getOne');
+                            if ($used) {
+                                $this->error['add_device'] = "You can't assign the same IP Address to multiple devices!";
+                                return(FALSE);
+                            }
                         }
 
                         if (!isset($displayname)) {
@@ -493,17 +494,18 @@ class endpointmanager {
           return(FALSE);
         }
         
-        $sql = "SELECT id FROM endpointman_mac_list WHERE static_ip = '" . $static_ip . "' AND id <> " . $macid;
-        $used = $this->eda->sql($sql, 'getOne');
-
-        if ($used) {
-          $this->error['update_device'] = "You can't assign the same IP Address to multiple devices!";
-          return(FALSE);
+        if(!empty($static_ip)){
+            $sql = "SELECT id FROM endpointman_mac_list WHERE static_ip = '" . $static_ip . "' AND id <> " . $macid;
+            $used = $this->eda->sql($sql, 'getOne');
+            if ($used) {
+              $this->error['update_device'] = "You can't assign the same IP Address to multiple devices!";
+              return(FALSE);
+            }
         }
         
         $sql = "UPDATE endpointman_mac_list SET model = " . $model . ", template_id =  " . $template . ", conn_type = '" . $conn_type . "', static_ip = '" . $static_ip . "' WHERE id = " . $macid;
         $this->eda->sql($sql);
-
+        
         if ($update_lines) {
             if (isset($luid)) {
                 $this->update_line($luid, NULL, $name, $line);
