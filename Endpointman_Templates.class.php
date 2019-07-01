@@ -194,6 +194,10 @@ class Endpointman_Templates
 				$settings['config_location'] = ""; //$this->configmod->get("config_location");
 				$settings['tz'] = $this->configmod->get("tz");
 				$settings['server_type'] = $this->configmod->get("server_type");
+        $settings['netmask'] = "";
+        $settings['gateway'] = "";
+        $settings['dns1'] = "";
+        $settings['dns2'] = "";
 			}
     		
 			$retarr = array("status" => true, "settings" => $settings, "message" => _("Global Config Read OK!"));
@@ -222,6 +226,11 @@ class Endpointman_Templates
 			
 			$_REQUEST['srvip'] = trim($_REQUEST['srvip']);  #trim whitespace from IP address
 			$_REQUEST['config_loc'] = trim($_REQUEST['config_loc']);  #trim whitespace from Config Location
+      
+      $_REQUEST['netmask'] = trim($_REQUEST['netmask']);
+      $_REQUEST['gateway'] = trim($_REQUEST['gateway']);
+      $_REQUEST['dns1'] = trim($_REQUEST['dns1']);
+      $_REQUEST['dns2'] = trim($_REQUEST['dns2']);
 	
 			$settings_warning = "";
 			if (strlen($_REQUEST['config_loc']) > 0) {
@@ -253,6 +262,10 @@ class Endpointman_Templates
 			$settings['srvip'] = (isset($_REQUEST['srvip']) ? $_REQUEST['srvip'] : "");
 			$settings['ntp'] = (isset($_REQUEST['ntp_server']) ? $_REQUEST['ntp_server'] : "");
 			$settings['tz'] = (isset($_REQUEST['tz']) ? $_REQUEST['tz'] : "");
+      $settings['netmask'] = (isset($_REQUEST['netmask']) ? $_REQUEST['netmask'] : "");
+      $settings['gateway'] = (isset($_REQUEST['gateway']) ? $_REQUEST['gateway'] : "");
+      $settings['dns1'] = (isset($_REQUEST['dns1']) ? $_REQUEST['dns1'] : "");
+      $settings['dns2'] = (isset($_REQUEST['dns2']) ? $_REQUEST['dns2'] : "");
 			$settings_ser = serialize($settings);
 			unset($settings);
 			

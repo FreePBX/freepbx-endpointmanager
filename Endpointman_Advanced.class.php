@@ -12,7 +12,7 @@ use FreePBX;
 
 class Endpointman_Advanced
 {
-    public $MODULES_PATH;
+  public $MODULES_PATH;
 	public $LOCAL_PATH;
 	public $PHONE_MODULES_PATH;
 
@@ -45,6 +45,18 @@ class Endpointman_Advanced
             }
         }
 	}
+  
+  /**
+  * @param String $mask - decimal, dot separated representation of a IPv4 subnet mask - e.g. "255.255.255.0"
+  * @return bool
+  */
+  function validate_dotted_netmask($mask) {
+    if (!$m = ip2long($mask)) {
+      return false;
+    }
+    $s = str_pad(decbin($m), 32, '0', STR_PAD_LEFT);
+    return preg_match('/^1{' . substr_count($s,"1") . '}/', $s) == true;
+  }
 
 	public function myShowPage(&$pagedata) {
 		if(empty($pagedata))
@@ -354,11 +366,19 @@ class Endpointman_Advanced
 
 			case "srvip":
 				$dget['value'] = trim($dget['value']);
-				$sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='srvip'";
+        if(filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+          $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='srvip'";
+        } else {
+          $retarr = array("status" => false, "message" => _("Invalid Server IP Address!"));
+        }
 				break;
 			case "intsrvip":
 				$dget['value'] = trim($dget['value']);
-				$sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='intsrvip'";
+        if(filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+          $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='intsrvip'";
+        } else {
+          $retarr = array("status" => false, "message" => _("Invalid Server Internal IP Address!"));
+        }
 				break;
 			case "tz":
 				$sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='tz'";
@@ -413,6 +433,42 @@ class Endpointman_Advanced
 					$dget['value'] = 'file';
 				}
 				$sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='server_type'";
+				break;
+        
+			case "netmask":
+        $dget['value'] = trim($dget['value']);
+        if($this->validate_dotted_netmask($dget['value'])){
+          $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='netmask'";
+        } else {
+          $retarr = array("status" => false, "message" => _("Invalid netmask!"));
+        }
+				break;
+        
+      case "gateway":
+        $dget['value'] = trim($dget['value']);
+        if(empty($dget['value']) || filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+          $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='gateway'";
+        } else {
+          $retarr = array("status" => false, "message" => _("Invalid Gateway IP Address!"));
+        }
+				break;
+        
+      case "dns1":
+        $dget['value'] = trim($dget['value']);
+        if(empty($dget['value']) || filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+          $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='dns1'";
+        } else {
+          $retarr = array("status" => false, "message" => _("Invalid Primary DNS IP Address!"));
+        }
+				break;
+        
+      case "dns2":
+        $dget['value'] = trim($dget['value']);
+        if(empty($dget['value']) || filter_var($dget['value'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+          $sql = "UPDATE endpointman_global_vars SET value='" . $dget['value'] . "' WHERE var_name='dns2'";
+        } else {
+          $retarr = array("status" => false, "message" => _("Invalid Secondary DNS IP Address!"));
+        }
 				break;
 
 			default:

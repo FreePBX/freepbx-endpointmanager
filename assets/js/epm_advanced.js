@@ -726,7 +726,7 @@ function epm_advanced_tab_oui_manager_refresh_table(showmsg = true)
 {
 	$("#mygrid").bootstrapTable('refresh');
 	if (showmsg === true) {
-		fpbxToast("Table Refrash Ok!", '', 'success');
+		fpbxToast("Table Refresh Ok!", '', 'success');
 	}
 }
 

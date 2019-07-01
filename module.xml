@@ -2,7 +2,7 @@
 	<rawname>endpointman</rawname>
 	<repo>unsupported</repo>
 	<name>OSS PBX End Point Manager</name>
-	<version>14.0.3</version>
+	<version>14.0.4</version>
 	<type>setup</type>
 	<category>Settings</category>
 	<license>GPLv3+</license>
@@ -23,6 +23,7 @@
 		Pull Requests can be made to either of these and are encouraged.
 	</description>
 	<changelog>
+		*14.0.4* Added option for assigning static IP Addresses to the phones
 		*14.0.3* Support for PHP 7
 		*14.0.2.1* Line State icon was only red. The state green/red is now fixed and works.
 		*14.0.2* Fixed a Problem if Sysadmin is not installed. Sysadmin is a commercial module and should not be forced to be installed to use OSS EPM.
@@ -114,6 +115,8 @@
 			<field name="id" type="integer" primarykey="true" autoincrement="true"/>
 			<field name="mac" type="string" length="12" notnull="false"/>
 			<field name="model" type="string" length="11"/>
+			<field name="conn_type" type="string" length="9"/>
+			<field name="static_ip" type="string" length="15" notnull="false"/>
 			<field name="template_id" type="integer"/>
 			<field name="global_custom_cfg_data" type="blob"/>
 			<field name="global_user_cfg_data" type="blob"/>

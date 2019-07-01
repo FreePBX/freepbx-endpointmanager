@@ -20,7 +20,7 @@ class epm_data_abstraction {
     }
 
     function all_devices() {
-        $sql = 'SELECT endpointman_mac_list.id , endpointman_mac_list.mac , endpointman_model_list.model, endpointman_model_list.enabled , endpointman_brand_list.name, endpointman_mac_list.global_custom_cfg_data, endpointman_mac_list.template_id FROM endpointman_mac_list , endpointman_model_list , endpointman_brand_list WHERE ( endpointman_model_list.id = endpointman_mac_list.model ) AND ( endpointman_model_list.brand = endpointman_brand_list.id )';
+        $sql = 'SELECT endpointman_mac_list.id , endpointman_mac_list.mac , endpointman_model_list.model, endpointman_model_list.enabled , endpointman_brand_list.name, endpointman_mac_list.global_custom_cfg_data, endpointman_mac_list.template_id, endpointman_mac_list.conn_type, endpointman_mac_list.static_ip FROM endpointman_mac_list , endpointman_model_list , endpointman_brand_list WHERE ( endpointman_model_list.id = endpointman_mac_list.model ) AND ( endpointman_model_list.brand = endpointman_brand_list.id )';
         $temp = sql($sql,'getAll',DB_FETCHMODE_ASSOC);
         return($temp);
     }
